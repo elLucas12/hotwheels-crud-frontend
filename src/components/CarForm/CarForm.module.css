@@ -1,0 +1,4 @@
+.CarForm-Form {
+    display: flex;
+    flex-direction: column;
+}
