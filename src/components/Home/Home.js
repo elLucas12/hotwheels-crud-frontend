@@ -1,9 +1,9 @@
 import React from "react";
 import HomeStyle from "./Home.module.css";
-
 import HotWheelsCardImage from './hotwheels-card.jpg';
 
-import { 
+import {
+  Box,
   Card,
   CardContent,
   CardMedia,
@@ -12,7 +12,7 @@ import {
 
 function Home() {
   return (
-    <div className={HomeStyle.Home}>
+    <Box className={HomeStyle.Home}>
       <Card className={HomeStyle['Home-card']} sx={{ maxWidth: 500 }}>
         <CardMedia component="img" height="340" sx={{ }} image={HotWheelsCardImage} title="Carro HotWheels" />
         <CardContent>
@@ -24,7 +24,7 @@ function Home() {
           </Typography>
         </CardContent>
       </Card>
-    </div>
+    </Box>
   );
 }
 

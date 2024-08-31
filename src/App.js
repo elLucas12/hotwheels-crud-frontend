@@ -92,14 +92,16 @@ export default function App() {
     <Router>
       <div>
         <NavBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/cars-list" element={<CarsList />} />
-          <Route path="/car-form" element={<CarForm />} />
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Container sx={{ paddingTop: 4 }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/cars-list" element={<CarsList />} />
+            <Route path="/car-form" element={<CarForm />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Container>
       </div>
     </Router>
   );
