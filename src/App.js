@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // import logo from './logo.svg';
 import './App.css';
-import Container from '@mui/material/Container';
+import { Typography, Container } from '@mui/material';
 
 import Home from './components/Home/Home';
 import NavBar from './components/NavBar/NavBar';
@@ -102,6 +102,11 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Container>
+        <footer className="App-footer">
+          <Typography variant="caption">
+            &copy; {new Date().getFullYear()} Lucas Zunho - Feito com ReactJS
+          </Typography>
+        </footer>
       </div>
     </Router>
   );

@@ -13,13 +13,17 @@
 }
 
 .App-footer {
-  text-align: right;
+  position: fixed;
+  bottom: 0px;
+  right: 0;
   padding: 20px;
 }
 
-@media (min-width: 200px) and (max-width: 500px) {
+@media (min-width: 200px) and (max-width: 1000px) {
   .App-footer {
-    text-align: center;
     padding: 0;
+    padding-top: 25px;
+    position: relative;
+    text-align: center;
   }
 }
