@@ -12,7 +12,13 @@ import {
   ListItemAvatar,
   ListItemText,
   IconButton,
-  Button
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from "@mui/material";
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,6 +31,7 @@ export default function CarsList() {
   const navigate = useNavigate();
   const { data, loading, error } = useApi("http://localhost:5000/cars");
   const [dense, setDense] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   if (loading) {
     return <CircularProgress />;
@@ -75,9 +82,81 @@ export default function CarsList() {
           </List>
         </Grid>
         <Box component="div" sx={{display: "flex"}}>
-          <Button variant="outlined" sx={{margin: "auto"}} onClick={() => {alert("hao");}}>Adicionar Carro</Button>
+          <Button variant="outlined" sx={{margin: "auto"}} onClick={() => {setDialogOpen(true);}}>Adicionar Carro</Button>
         </Box>
       </Box>
+      <Dialog 
+        open={dialogOpen}
+        onClose={() => {setDialogOpen(false);}}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries(formData.entries());
+            const brand = formJson.brand;
+            const color = formJson.color;
+            const name = formJson.name;
+            const year = formJson.year;
+            setDialogOpen(false);
+          },
+        }}
+      >
+        <DialogTitle>Novo Carro</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Para adicionar um novo carro HotWheels, por favor preencha o formulário.
+          </DialogContentText>
+          <TextField
+            autoFocus={true}
+            required={true}
+            margin={dense ? "dense" : "normal"}
+            id="brand"
+            name="brand"
+            label="Marca"
+            type="text"
+            fullWidth={true}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={true}
+            required={true}
+            margin={dense ? "dense" : "normal"}
+            id="color"
+            name="color"
+            label="Cor"
+            type="text"
+            fullWidth={true}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={true}
+            required={true}
+            margin={dense ? "dense" : "normal"}
+            id="name"
+            name="name"
+            label="Nome"
+            type="text"
+            fullWidth={true}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={true}
+            required={true}
+            margin={dense ? "dense" : "normal"}
+            id="year"
+            name="year"
+            label="Ano de Fabricação"
+            type="text"
+            fullWidth={true}
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setDialogOpen(false);}}>Cancelar</Button>
+          <Button type="submit">Enviar</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
