@@ -25,11 +25,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
 
 import CarsListStyle from "./CarsList.module.css";
-import useApi from "../../hooks/useApi";
+import useApiGet from "../../hooks/useApi";
 
 export default function CarsList() {
   const navigate = useNavigate();
   const { data, loading, error } = useApi("http://localhost:5000/cars");
+  const [cars, setCars] = useState(data);
+
   const [dense, setDense] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -51,36 +53,42 @@ export default function CarsList() {
         </Typography>
       </Box>
       <Box component="div" sx={{margin: "auto"}}>
-        <Grid xs={12} md={6} lg={2}>
-          <List dense={dense}>
-            {data.map((car) => {
-              return (
-                <ListItem
-                  key={car.id}
-                  secondaryAction={
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  }
-                  sx={{
-                    display: "flex",
-                    marginBottom: "15px"
-                  }}
-                  >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <FolderIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={car.name + " - " + car.brand}
-                    secondary={null}
-                  />
-                </ListItem>
-              );
-            })}
-          </List>
-        </Grid>
+        <List dense={dense}>
+          {cars.map((car) => {
+            return (
+              <ListItem
+                key={car.id}
+                secondaryAction={
+                  <IconButton edge="end" aria-label="delete" onClick={(e) => {
+                    e.preventDefault();
+                    let newCars = cars.map((reg) => {
+                      if (reg.id !== car.id) {
+                        return (reg);
+                      }
+                    });
+                    setCars(newCars);
+                  }}>
+                    <DeleteIcon />
+                  </IconButton>
+                }
+                sx={{
+                  display: "flex",
+                  mb: "15px"
+                }}
+                >
+                <ListItemAvatar>
+                  <Avatar>
+                    <FolderIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={car.name + " - " + car.brand}
+                  secondary={null}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
         <Box component="div" sx={{display: "flex"}}>
           <Button variant="outlined" sx={{margin: "auto"}} onClick={() => {setDialogOpen(true);}}>Adicionar Carro</Button>
         </Box>
