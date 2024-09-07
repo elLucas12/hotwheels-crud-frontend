@@ -9,14 +9,12 @@ import {
   CircularProgress, 
   Typography,
   Box,
-  Grid2 as Grid,
   Avatar,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   ListItemButton,
-  Collapse,
   IconButton,
   Button,
   TextField,
@@ -27,9 +25,8 @@ import {
   DialogTitle
 } from "@mui/material";
 
+import DeleteIcon from "@mui/icons-material/Delete";
 import CarsListStyle from "./CarsList.module.css";
-import DeleteIcon from '@mui/icons-material/Delete';
-import FolderIcon from '@mui/icons-material/Folder';
 import CarsListAvatarImage from "./avatar.png";
 
 export default function CarsList() {
@@ -71,13 +68,17 @@ export default function CarsList() {
               <ListItem
                 key={car.id}
                 secondaryAction={
-                  <IconButton edge="end" aria-label="delete" onClick={(e) => {
-                    e.preventDefault();
-                    /* Requisição DELETE com o ID do carro */
-                    axios.delete(`${BASE_URL}/${car.id}`).then(() => {
-                      setDeletedCarDialog(true);
-                    });
-                  }}>
+                  <IconButton 
+                    edge="end" 
+                    aria-label="delete" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      /* Requisição DELETE com o ID do carro */
+                      axios.delete(`${BASE_URL}/${car.id}`).then(() => {
+                        setDeletedCarDialog(true);
+                      });
+                    }}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 }
@@ -86,17 +87,24 @@ export default function CarsList() {
                   mb: "15px"
                 }}
               >
-                <ListItemAvatar>
-                  <Avatar alt={"Car " + car.name} src={CarsListAvatarImage} />
-                </ListItemAvatar>
-                <ListItemButton onClick={(e) => {
+                <ListItemButton 
+                  onClick={(e) => {
                     e.preventDefault();
                     navigate("/car/" + car.id);
                   }}
                 >
+                  <ListItemAvatar>
+                    <Avatar alt={"Car " + car.name} src={CarsListAvatarImage} />
+                  </ListItemAvatar>
                   <ListItemText
                     primary={car.name + " - " + car.brand}
-                    secondary={null}
+                    secondary={
+                      <Link to={"/car/edit/" + car.id}>
+                        <Typography variant="button">
+                          editar
+                        </Typography>
+                      </Link>
+                    }
                   />
                 </ListItemButton>
               </ListItem>
