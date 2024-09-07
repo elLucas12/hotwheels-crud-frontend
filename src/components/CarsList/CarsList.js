@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL } from "../../api";
 
 import {
   CircularProgress, 
@@ -25,18 +27,25 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
 
 import CarsListStyle from "./CarsList.module.css";
-import useApiGet from "../../hooks/useApi";
+import useApi from "../../hooks/useApi";
 
 export default function CarsList() {
   const navigate = useNavigate();
-  const { data, loading, error } = useApi("http://localhost:5000/cars");
-  const [cars, setCars] = useState(data);
-
+  const { data, loading, error } = useApi(BASE_URL);
   const [dense, setDense] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [addCarDialog, setAddCarDialog] = useState(false);
+  const [deletedCarDialog, setDeletedCarDialog] = useState(false);
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <CircularProgress 
+        sx={{ 
+          position: "absolute", 
+          left: 0, right: 0, top: 0, bottom: 0, 
+          ml: "auto", mr: "auto", mt: "auto", mb: "auto" 
+        }} 
+      />
+    );
   }
   if (error) {
     return <Typography variante="body1" sx={{color: "red"}}>{error}</Typography>
@@ -54,19 +63,16 @@ export default function CarsList() {
       </Box>
       <Box component="div" sx={{margin: "auto"}}>
         <List dense={dense}>
-          {cars.map((car) => {
+          {data.map((car) => {
             return (
               <ListItem
                 key={car.id}
                 secondaryAction={
                   <IconButton edge="end" aria-label="delete" onClick={(e) => {
                     e.preventDefault();
-                    let newCars = cars.map((reg) => {
-                      if (reg.id !== car.id) {
-                        return (reg);
-                      }
+                    axios.delete(`${BASE_URL}/${car.id}`).then(() => {
+                      setDeletedCarDialog(true);
                     });
-                    setCars(newCars);
                   }}>
                     <DeleteIcon />
                   </IconButton>
@@ -90,23 +96,27 @@ export default function CarsList() {
           })}
         </List>
         <Box component="div" sx={{display: "flex"}}>
-          <Button variant="outlined" sx={{margin: "auto"}} onClick={() => {setDialogOpen(true);}}>Adicionar Carro</Button>
+          <Button variant="outlined" sx={{margin: "auto"}} onClick={() => {setAddCarDialog(true);}}>Adicionar Carro</Button>
         </Box>
       </Box>
+
+      {/* Dialogo com formulário, mostrado ao apertar o botão de novo veículo */}
       <Dialog 
-        open={dialogOpen}
-        onClose={() => {setDialogOpen(false);}}
+        open={addCarDialog}
+        onClose={() => {setAddCarDialog(false);}}
         PaperProps={{
           component: 'form',
           onSubmit: (event) => {
             event.preventDefault();
+
+            // Armazenando informações do formulário
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
-            const brand = formJson.brand;
-            const color = formJson.color;
-            const name = formJson.name;
-            const year = formJson.year;
-            setDialogOpen(false);
+            //const formJsonString = "\"name\": \""+formJson.name+"\", \"brand\": \""+formJson.brand+"\", \"color\": \""+formJson.color+"\", \"year\": \""+formJson.year+"\"";
+
+            // Sincronizando atualizações com a API
+            axios.post(BASE_URL, formJson);
+            setAddCarDialog(false);
           },
         }}
       >
@@ -161,8 +171,24 @@ export default function CarsList() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {setDialogOpen(false);}}>Cancelar</Button>
+          <Button onClick={() => {setAddCarDialog(false);}}>Cancelar</Button>
           <Button type="submit">Enviar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialogo mostrado ao deletar um veículo */}
+      <Dialog 
+        open={deletedCarDialog}
+        onClose={() => {setDeletedCarDialog(false);}}
+      >
+        <DialogTitle>Remover Carro</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Carro da HotWheels removido com sucesso!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setDeletedCarDialog(false);}}>Fechar</Button>
         </DialogActions>
       </Dialog>
     </Box>
