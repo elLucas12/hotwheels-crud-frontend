@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import { BASE_URL } from "../../api";
+import useApi from "../../hooks/useApi";
 
 import {
   CircularProgress, 
@@ -13,6 +15,8 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  ListItemButton,
+  Collapse,
   IconButton,
   Button,
   TextField,
@@ -23,11 +27,10 @@ import {
   DialogTitle
 } from "@mui/material";
 
+import CarsListStyle from "./CarsList.module.css";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
-
-import CarsListStyle from "./CarsList.module.css";
-import useApi from "../../hooks/useApi";
+import CarsListAvatarImage from "./avatar.png";
 
 export default function CarsList() {
   const navigate = useNavigate();
@@ -70,6 +73,7 @@ export default function CarsList() {
                 secondaryAction={
                   <IconButton edge="end" aria-label="delete" onClick={(e) => {
                     e.preventDefault();
+                    /* Requisição DELETE com o ID do carro */
                     axios.delete(`${BASE_URL}/${car.id}`).then(() => {
                       setDeletedCarDialog(true);
                     });
@@ -81,16 +85,20 @@ export default function CarsList() {
                   display: "flex",
                   mb: "15px"
                 }}
-                >
+              >
                 <ListItemAvatar>
-                  <Avatar>
-                    <FolderIcon />
-                  </Avatar>
+                  <Avatar alt={"Car " + car.name} src={CarsListAvatarImage} />
                 </ListItemAvatar>
-                <ListItemText
-                  primary={car.name + " - " + car.brand}
-                  secondary={null}
-                />
+                <ListItemButton onClick={(e) => {
+                    e.preventDefault();
+                    navigate("/car/" + car.id);
+                  }}
+                >
+                  <ListItemText
+                    primary={car.name + " - " + car.brand}
+                    secondary={null}
+                  />
+                </ListItemButton>
               </ListItem>
             );
           })}
@@ -112,7 +120,6 @@ export default function CarsList() {
             // Armazenando informações do formulário
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
-            //const formJsonString = "\"name\": \""+formJson.name+"\", \"brand\": \""+formJson.brand+"\", \"color\": \""+formJson.color+"\", \"year\": \""+formJson.year+"\"";
 
             // Sincronizando atualizações com a API
             axios.post(BASE_URL, formJson);
