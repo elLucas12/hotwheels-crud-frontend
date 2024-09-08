@@ -31,7 +31,7 @@ import CarsListAvatarImage from "./avatar.png";
 
 export default function CarsList() {
   const navigate = useNavigate();
-  const { data, loading, error } = useApi(BASE_URL);
+  const { data, setData, loading, error } = useApi(BASE_URL);
 
   const [dense, setDense] = useState(false);
   const [addCarDialog, setAddCarDialog] = useState(false);
@@ -76,6 +76,7 @@ export default function CarsList() {
                       /* Requisição DELETE com o ID do carro */
                       axios.delete(`${BASE_URL}/${car.id}`).then(() => {
                         setDeletedCarDialog(true);
+                        setData(data.filter((reg) => reg.id !== car.id));
                       });
                     }}
                   >
@@ -203,7 +204,9 @@ export default function CarsList() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {setDeletedCarDialog(false);}}>Fechar</Button>
+          <Button onClick={() => {
+            setDeletedCarDialog(false);
+          }}>Fechar</Button>
         </DialogActions>
       </Dialog>
     </Box>
