@@ -37,6 +37,23 @@ export default function CarsList() {
   const [addCarDialog, setAddCarDialog] = useState(false);
   const [deletedCarDialog, setDeletedCarDialog] = useState(false);
 
+  function deleteCar(carId) {
+    axios.delete(`${BASE_URL}/${carId}`).then(() => {
+      setDeletedCarDialog(true);
+      setData(data.filter((reg) => reg.id !== carId));
+    });
+  }
+
+  async function postCar(jsonData) {
+    try {
+      const res = await axios.post(BASE_URL, jsonData);
+      const newData = {...res.data, id: (data.length ? data[data.length-1].id + 1 : 1)};
+      setData([...data, newData]);
+    } catch (error) {
+      console.error("Error ao realizar requisição POST/Get de atualização ", error);
+    }
+  }
+
   if (loading) {
     return (
       <CircularProgress 
@@ -74,10 +91,7 @@ export default function CarsList() {
                     onClick={(e) => {
                       e.preventDefault();
                       /* Requisição DELETE com o ID do carro */
-                      axios.delete(`${BASE_URL}/${car.id}`).then(() => {
-                        setDeletedCarDialog(true);
-                        setData(data.filter((reg) => reg.id !== car.id));
-                      });
+                      deleteCar(car.id);
                     }}
                   >
                     <DeleteIcon />
@@ -131,7 +145,7 @@ export default function CarsList() {
             const formJson = Object.fromEntries(formData.entries());
 
             // Sincronizando atualizações com a API
-            axios.post(BASE_URL, formJson);
+            postCar(formJson);
             setAddCarDialog(false);
           },
         }}

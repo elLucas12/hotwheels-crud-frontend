@@ -12,7 +12,7 @@ export default function useApi(url) {
         const res = await axios.get(url);
         setData(res.data);
         setLoading(false);
-      } catch(error) {
+      } catch (error) {
         setError('Erro ao atingir dados na API');
         setLoading(false);
       }
