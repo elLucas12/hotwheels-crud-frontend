@@ -32,6 +32,7 @@ import CarsListAvatarImage from "./avatar.png";
 export default function CarsList() {
   const navigate = useNavigate();
   const { data, loading, error } = useApi(BASE_URL);
+
   const [dense, setDense] = useState(false);
   const [addCarDialog, setAddCarDialog] = useState(false);
   const [deletedCarDialog, setDeletedCarDialog] = useState(false);
@@ -46,8 +47,7 @@ export default function CarsList() {
         }} 
       />
     );
-  }
-  if (error) {
+  } else if (error) {
     return <Typography variante="body1" sx={{color: "red"}}>{error}</Typography>
   }
 

@@ -1,32 +1,16 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import useApi from "../../hooks/useApi";
+import { BASE_URL } from "../../api";
+
 import CarDetailStyle from './CarDetail.module.css';
 
-export default function CarDetail({carroIdx, listCarros, setListCarros, navigate}) {
+export default function CarDetail({carroIdx, listCarros, setListCarros}) {
+  const navigate = useNavigate();
+  const { data, loading, error } = useApi(BASE_URL);
+
   let carro = listCarros[carroIdx];
-
-  function editCarroInfo(aReg) {
-    let newValue = prompt("Informe o novo valor do campo \"" + aReg['label'] + "\"");
-    if (!(newValue == null)) {
-      // Alteração do carro com o novo valor
-      aReg['value'] = newValue;
-
-      // Mapeamento e atualização do obj.
-      let newCarro = carro.map(
-        (reg, idx) => {
-          if (reg['id'] === aReg['id']) {
-            return aReg;
-          } else {
-            return reg;
-          }
-        }
-      );
-
-      // Remoção do elemento antigo & Definição no array de dados
-      listCarros[carroIdx] = newCarro;
-      setListCarros(listCarros);
-    }
-    navigate("/car-detail?" + carroIdx);
-  }
 
   return(
     <div>
@@ -42,7 +26,7 @@ export default function CarDetail({carroIdx, listCarros, setListCarros, navigate
               <div>
                 <b>{reg['label']}</b>{reg['value']}
               </div>
-              <button onClick={function (e) {e.preventDefault(); editCarroInfo(reg)}}>Editar Campo</button>
+              <button onClick={function (e) {e.preventDefault(); }}>Editar Campo</button>
             </li>
           )}
         </ul>
