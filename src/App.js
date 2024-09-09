@@ -12,7 +12,6 @@ import CarForm from './components/CarForm/CarForm';
 import CarsList from './components/CarsList/CarsList';
 import CarDetail from './components/CarDetail/CarDetail';
 import NotFound from './components/NotFound/NotFound';
-import CarEdit from './components/CarEdit/CarEdit';
 
 function RouterOld() {
   const [page, setPage] = useState('/');
@@ -101,7 +100,6 @@ export default function App() {
             <Route path="/car-form" element={<CarForm />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
-            <Route path="/car/edit/:id" element={<CarEdit />}/>
             <Route path="/car/:id" element={<CarDetail />} />
           </Routes>
         </Container>

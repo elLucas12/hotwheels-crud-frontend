@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-import { BASE_URL } from "../../api";
+import { BASE_URL, deleteCar, postCar } from "../../api";
 import useApi from "../../hooks/useApi";
 
 import {
@@ -36,23 +35,6 @@ export default function CarsList() {
   const [dense, setDense] = useState(false);
   const [addCarDialog, setAddCarDialog] = useState(false);
   const [deletedCarDialog, setDeletedCarDialog] = useState(false);
-
-  function deleteCar(carId) {
-    axios.delete(`${BASE_URL}/${carId}`).then(() => {
-      setDeletedCarDialog(true);
-      setData(data.filter((reg) => reg.id !== carId));
-    });
-  }
-
-  async function postCar(jsonData) {
-    try {
-      const res = await axios.post(BASE_URL, jsonData);
-      const newData = {...res.data, id: (data.length ? data[data.length-1].id + 1 : 1)};
-      setData([...data, newData]);
-    } catch (error) {
-      console.error("Error ao realizar requisição POST/Get de atualização ", error);
-    }
-  }
 
   if (loading) {
     return (
@@ -91,7 +73,7 @@ export default function CarsList() {
                     onClick={(e) => {
                       e.preventDefault();
                       /* Requisição DELETE com o ID do carro */
-                      deleteCar(car.id);
+                      deleteCar(car.id, data, setData, setDeletedCarDialog);
                     }}
                   >
                     <DeleteIcon />
@@ -114,11 +96,7 @@ export default function CarsList() {
                   <ListItemText
                     primary={car.name + " - " + car.brand}
                     secondary={
-                      <Link to={"/car/edit/" + car.id}>
-                        <Typography variant="button">
-                          editar
-                        </Typography>
-                      </Link>
+                      <Typography variant="caption">ID: {car.id}</Typography>
                     }
                   />
                 </ListItemButton>
@@ -145,7 +123,7 @@ export default function CarsList() {
             const formJson = Object.fromEntries(formData.entries());
 
             // Sincronizando atualizações com a API
-            postCar(formJson);
+            postCar(formJson, data, setData);
             setAddCarDialog(false);
           },
         }}
