@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import { BASE_URL, putCar } from "../../api";
 
-import CarDetailStyle from './CarDetail.module.css';
 import { 
   Box, 
   CircularProgress, 

@@ -1,56 +1,140 @@
 import React, { useState } from "react";
-import CarFormStyle from "./CarForm.module.css";
+import useApi from "../../hooks/useApi";
+import { BASE_URL, postCar } from "../../api";
 
-export default function CarForm({setListCarros, listCarros, isSub=false, navigate=undefined}) {
-  if(isSub && navigate == null)
-    throw Error("Expected 'navigate' prop when 'isSub=true'!");
+import {
+  Box,
+  Typography, 
+  CircularProgress,
+  TextField,
+  Button, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions
+} from "@mui/material";
 
-  const formArray = [
-    {id: 0, name: "nome", value: "", type: "text", label: "Nome:"},
-    {id: 1, name: "marca", value: "", type: "text", label: "Marca:"},
-    {id: 2, name: "cor", value: "", type: "text", label: "Cor:"},
-    {id: 3, name: "ano", value: new Date().getFullYear(), type: "number", label: "Ano:"}
-  ];
+import EditIcon from '@mui/icons-material/Edit';
 
-  const [carro, setCarro] = useState(formArray);
+export default function CarForm() {
+  const { data, setData, loading, error } = useApi(BASE_URL);
+  const [addCarDialog, setAddCarDialog] = useState(false);
 
-  function recordCarro(e) {
-    e.preventDefault();
-    setListCarros([...listCarros, carro]);
-    setCarro(formArray);
-    alert("Carro adicionado com sucesso!");
-    if (isSub) navigate('/cars-list');
-  }
-
-  function handleCarro(e, aId) {
-    let carroAux = carro.map(
-      (reg, idx) => {
-        if (reg['id'] === aId) {
-          return { ...reg, value: e.target.value };
-        } else {
-          return reg;
-        }
-      }
+  // Verificações de carregamento dos dados da API
+  if (loading) {
+    return(
+      <CircularProgress 
+        sx={{ 
+          position: "absolute", 
+          left: 0, right: 0, top: 0, bottom: 0, 
+          ml: "auto", mr: "auto", mt: "auto", mb: "auto" 
+        }}
+      />
     );
-    setCarro(carroAux);
+  } else if (error) {
+    return <Typography variante="body1" sx={{color: "red"}}>{error}</Typography>
   }
 
-  return(
-    <div>
-      <div className="default-header">
-        <h1>Adicionar Carro</h1>
-        <p>Preencha para adicionar um novo carro HotWheels</p>
-      </div>
-      <form className={CarFormStyle['CarForm-form']} onSubmit={recordCarro}>
-        {carro.map(
-          (reg, idx) =>
-          <div key={reg.id}>
-            <label>{reg.label}<input name={reg.nome} id={reg.id} value={reg.value} onChange={(e) => handleCarro(e, reg.id)} type={reg.type} required={true} /></label>
-          </div>
-        )}
-        <button type="submit">Adicionar</button>
-        { isSub ? <a href="#" onClick={function (e) {e.preventDefault(); navigate('/cars-list')}}>Cancelar</a> : "" }
-      </form>
-    </div>
+  return (
+    <Box sx={{
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      <Box component="div" sx={{margin: "auto", textAlign: "center"}}>
+        <Typography gutterBottom variant="h5" component="div">
+          Adicionar Carro
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Preencha o formulário para adicionar carros
+        </Typography>
+      </Box>
+      <Box 
+        component="form" 
+        sx={{
+          margin: "auto",
+        }}
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          // Armazenando informações do formulário
+          const formData = new FormData(e.currentTarget);
+          let formJson = Object.fromEntries(formData.entries());
+
+          // Atualizando informações locais e na API
+          postCar(formJson, data, setData);
+          setAddCarDialog(true);
+          e.currentTarget.reset();
+        }}
+      >
+        <Box sx={{display: "flex", flexDirection: "column"}}>
+          <TextField
+            autoFocus={true}
+            required={true}
+            margin="normal"
+            id="brand"
+            name="brand"
+            label="Marca"
+            type="text"
+            fullWidth={false}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={false}
+            required={true}
+            margin="normal"
+            id="color"
+            name="color"
+            label="Cor"
+            type="text"
+            fullWidth={false}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={false}
+            required={true}
+            margin="normal"
+            id="name"
+            name="name"
+            label="Nome"
+            type="text"
+            fullWidth={false}
+            variant="standard"
+          />
+          <TextField
+            autoFocus={false}
+            required={true}
+            margin="normal"
+            id="year"
+            name="year"
+            label="Ano de Fabricação"
+            type="text"
+            fullWidth={false}
+            variant="standard"
+          />
+        </Box>
+        <Box sx={{display: "flex", justifyContent: "center"}}>
+          <Button variant="contained" endIcon={<EditIcon />} type="submit">Cadastrar</Button>
+        </Box>
+      </Box>
+
+      {/* Dialogo mostrado ao adicionar o carro */}
+      <Dialog 
+        open={addCarDialog}
+        onClose={() => {setAddCarDialog(false);}}
+      >
+        <DialogTitle>Cadastro Concluído</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Carro da HotWheels cadastrado com sucesso!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setAddCarDialog(false);
+          }}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }
