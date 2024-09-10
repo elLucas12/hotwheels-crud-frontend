@@ -6,7 +6,7 @@ Sistema *front-end* com operações CRUD (*Create*, *Read*, *Update* e *Delete*)
 
 Demonstração do sistema ao ser executado:
 
-![Resultado esperado ao rodar este projeto (GIF)](./docs/presentation.gif)
+![Resultado esperado ao rodar este projeto (PNG)](./docs/presentation_print.png)
 
 ## Execução do Projeto
 
